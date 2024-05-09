@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "express": "^4.19.2",
+    "lowdb": "^7.0.1",
+    "socket.io": "^4.7.5"
+  },
+  "name": "chat",
+  "description": "[Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/bcrhbrhcdb/chat)",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcrhbrhcdb/Noobs-Unblocked-Games.git"
+  },
+  "keywords": [
+    "start",
+    "run"
+  ],
+  "author": "alex",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bcrhbrhcdb/Noobs-Unblocked-Games/issues"
+  },
+  "homepage": "https://github.com/bcrhbrhcdb/Noobs-Unblocked-Games#readme"
+}
