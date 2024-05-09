@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat Room</title>
+    <style>
+      #messages {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      .message {
+        margin-bottom: 10px;
+      }
+      .message .username {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chat Room</h1>
+    <div id="messages"></div>
+    <input type="text" id="username" placeholder="Enter your username" />
+    <button id="joinBtn">Join</button>
+    <div id="chatControls" style="display: none;">
+      <input type="text" id="renameInput" placeholder="Enter a new username" />
+      <button id="renameBtn">Rename</button>
+      <input type="text" id="messageInput" placeholder="Enter your message" />
+      <button id="sendBtn">Send</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const messagesDiv = document.getElementById('messages');
+      const usernameInput = document.getElementById('username');
+      const joinBtn = document.getElementById('joinBtn');
+      const chatControls = document.getElementById('chatControls');
+      const renameInput = document.getElementById('renameInput');
+      const renameBtn = document.getElementById('renameBtn');
+      const messageInput = document.getElementById('messageInput');
+      const sendBtn = document.getElementById('sendBtn');
+
+      let username;
+
+      // Display initial messages
+      socket.on('initialMessages', (messages) => {
+        messages.forEach(({ user, message }) => {
+          addMessage(`<span class="username">${user}:</span> ${message}`);
+        });
+      });
+
+      joinBtn.addEventListener('click', () => {
+        username = usernameInput.value.trim();
+        if (username) {
+          socket.emit('join', username);
+        }
+      });
+
+      renameBtn.addEventListener('click', () => {
+        const newUsername = renameInput.value.trim();
+        if (newUsername) {
+          socket.emit('rename', newUsername);
+        }
+      });
+
+      sendBtn.addEventListener('click', () => {
+        const message = messageInput.value.trim();
+        if (message) {
+          socket.emit('message', message);
+          messageInput.value = '';
+        }
+      });
+
+      socket.on('welcome', (message) => {
+        addMessage(message);
+        usernameInput.style.display = 'none';
+        joinBtn.style.display = 'none';
+        chatControls.style.display = 'block';
+      });
+
+      socket.on('error', (message) => {
+        addMessage(message, 'error');
+      });
+
+      socket.on('success', (message) => {
+        addMessage(message, 'success');
+      });
+
+      socket.on('userJoined', (username) => {
+        addMessage(`${username} joined the chat`, 'notification');
+      });
+
+      socket.on('userLeft', (username) => {
+        addMessage(`${username} left the chat`, 'notification');
+      });
+
+      socket.on('userRenamed', ({ oldUsername, newUsername }) => {
+        addMessage(`${oldUsername} changed their username to ${newUsername}`, 'notification');
+      });
+
+      socket.on('newMessage', ({ user, message }) => {
+        addMessage(`<span class="username">${user}:</span> ${message}`);
+      });
+
+      function addMessage(message, type = 'message') {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', type);
+        messageElement.innerHTML = message;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
